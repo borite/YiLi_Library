@@ -12,31 +12,23 @@ namespace YiLi_Library.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class BookList
+    public partial class BookSection
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public BookList()
+        public BookSection()
         {
-            this.BookSection = new HashSet<BookSection>();
-            this.UserReadHistory = new HashSet<UserReadHistory>();
+            this.SubBookSection = new HashSet<SubBookSection>();
         }
     
+        public int SectionlD { get; set; }
         public int BookID { get; set; }
-        public string Title { get; set; }
-        public string Abstract { get; set; }
-        public string Author { get; set; }
-        public string CoverIMG { get; set; }
+        public Nullable<int> SectionOrder { get; set; }
+        public string SectionContent { get; set; }
         public System.DateTime AddTime { get; set; }
-        public Nullable<int> BookType { get; set; }
-        public byte State { get; set; }
-        public Nullable<System.DateTime> TopTime { get; set; }
-        public Nullable<bool> Recommend { get; set; }
-        public Nullable<int> ClickNum { get; set; }
         public string Remark { get; set; }
     
+        public virtual BookList BookList { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BookSection> BookSection { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserReadHistory> UserReadHistory { get; set; }
+        public virtual ICollection<SubBookSection> SubBookSection { get; set; }
     }
 }

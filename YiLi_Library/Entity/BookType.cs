@@ -12,16 +12,10 @@ namespace YiLi_Library.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class BookInfo
+    public partial class BookType
     {
-        public int BookInfoID { get; set; }
-        public int BooklD { get; set; }
-        public int SectionOrder { get; set; }
-        public string SectionContent { get; set; }
-        public Nullable<int> SubSectionOrder { get; set; }
-        public string SubSectionContent { get; set; }
+        public int ID { get; set; }
+        public string TypeName { get; set; }
         public System.DateTime AddTime { get; set; }
-        public byte BookListType { get; set; }
-        public string Remark { get; set; }
     }
 }

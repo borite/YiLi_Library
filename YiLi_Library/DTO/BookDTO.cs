@@ -113,6 +113,70 @@ namespace YiLi_Library.DTO
             public string Remark { get; set; }
 
         }
+        /// <summary>
+        /// 增加一级章节信息
+        /// </summary>
+        public class CreatBooKinfoDTO
+        {
+
+            /// <summary>
+            /// 书籍ID 
+            /// </summary>
+            public int BooklD { get; set; }
+            /// <summary>
+            ///一级章节排序
+            /// </summary>
+            public int SectionOrder { get; set; }
+
+            /// <summary>
+            /// 章节ID
+            /// </summary>
+            public int SectionID { get; set; }
+
+
+            /// <summary>
+            /// 一级章节内容
+            /// </summary>
+            public string SectionContent { get; set; }
+            /// <summary>
+            /// 二级章节排序
+            /// </summary>
+            public Nullable<int> SubSectionOrder { get; set; }
+            /// <summary>
+            /// 二级章节内容
+            /// </summary>
+            public string SubSectionContent { get; set; }
+    
+         
+            /// <summary>
+            /// 后台备注
+            /// </summary>
+            public string Remark { get; set; }
+        }
+        /// <summary>
+        /// 增加二级章节及文章
+        /// </summary>
+
+        public class CreatSubTitleDTO
+        {
+            /// <summary>
+            /// 一章节ID
+            /// </summary>
+            public int SectionID { get; set; }
+            /// <summary>
+            /// 二级章节排序
+            /// </summary>
+            public int SubSectionOrder { get; set; }
+            /// <summary>
+            /// 二级章节名字
+            /// </summary>
+            public string SubSectionContent { get; set; }
+            /// <summary>
+            /// 文章正文
+            /// </summary>
+            public string Article { get; set; }
+        
+        }
 
     }
 }

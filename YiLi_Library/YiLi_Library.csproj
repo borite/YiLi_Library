@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aliyun.OSS, Version=2.9.0.0, Culture=neutral, PublicKeyToken=0ad4175f0dac0b9b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aliyun.OSS.SDK.2.9.0\lib\Aliyun.OSS.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -121,13 +124,18 @@
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Class\AliyunHelper.cs" />
     <Compile Include="Class\CodeNew.cs" />
+    <Compile Include="Class\OSSConfig.cs" />
     <Compile Include="Controllers\FrontController.cs" />
     <Compile Include="DTO\BookDTO.cs" />
-    <Compile Include="Entity\BookInfo.cs">
+    <Compile Include="Entity\BookList.cs">
       <DependentUpon>Libary.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entity\BookList.cs">
+    <Compile Include="Entity\BookSection.cs">
+      <DependentUpon>Libary.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\BookType.cs">
       <DependentUpon>Libary.tt</DependentUpon>
     </Compile>
     <Compile Include="Entity\Libary.Context.cs">
@@ -144,6 +152,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Libary.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\SubBookSection.cs">
+      <DependentUpon>Libary.tt</DependentUpon>
     </Compile>
     <Compile Include="Entity\User.cs">
       <DependentUpon>Libary.tt</DependentUpon>

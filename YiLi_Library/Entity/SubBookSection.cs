@@ -12,14 +12,15 @@ namespace YiLi_Library.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class UserReadHistory
+    public partial class SubBookSection
     {
-        public int HisID { get; set; }
-        public string OpenID { get; set; }
-        public Nullable<int> BookListID { get; set; }
-        public Nullable<System.DateTime> ReadTime { get; set; }
-        public string ReadSection { get; set; }
+        public int SubSectionID { get; set; }
+        public int SectionID { get; set; }
+        public int SubSectionOrder { get; set; }
+        public string SubSectionContent { get; set; }
+        public System.DateTime AddTime { get; set; }
+        public string Article { get; set; }
     
-        public virtual BookList BookList { get; set; }
+        public virtual BookSection BookSection { get; set; }
     }
 }

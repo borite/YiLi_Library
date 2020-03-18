@@ -5,20 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="YL_LibaryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="BookInfo">
-          <Key>
-            <PropertyRef Name="BookInfoID" />
-          </Key>
-          <Property Name="BookInfoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="BooklD" Type="int" Nullable="false" />
-          <Property Name="SectionOrder" Type="int" Nullable="false" />
-          <Property Name="SectionContent" Type="nvarchar" MaxLength="200" Nullable="false" />
-          <Property Name="SubSectionOrder" Type="int" />
-          <Property Name="SubSectionContent" Type="nvarchar" MaxLength="200" />
-          <Property Name="AddTime" Type="datetime" Nullable="false" />
-          <Property Name="BookListType" Type="tinyint" Nullable="false" />
-          <Property Name="Remark" Type="nvarchar" MaxLength="500" />
-        </EntityType>
         <EntityType Name="BookList">
           <Key>
             <PropertyRef Name="BookID" />
@@ -27,6 +13,7 @@
           <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Abstract" Type="nvarchar" MaxLength="500" />
           <Property Name="Author" Type="nvarchar" MaxLength="50" />
+          <Property Name="CoverIMG" Type="nvarchar" MaxLength="500" />
           <Property Name="AddTime" Type="datetime" Nullable="false" />
           <Property Name="BookType" Type="int" />
           <Property Name="State" Type="tinyint" Nullable="false" />
@@ -34,7 +21,36 @@
           <Property Name="Recommend" Type="bit" />
           <Property Name="ClickNum" Type="int" />
           <Property Name="Remark" Type="nvarchar" MaxLength="500" />
-          <Property Name="CoverIMG" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="BookSection">
+          <Key>
+            <PropertyRef Name="SectionlD" />
+          </Key>
+          <Property Name="SectionlD" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BookID" Type="int" Nullable="false" />
+          <Property Name="SectionOrder" Type="int" />
+          <Property Name="SectionContent" Type="nvarchar" MaxLength="200" />
+          <Property Name="AddTime" Type="datetime" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="BookType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TypeName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AddTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubBookSection">
+          <Key>
+            <PropertyRef Name="SubSectionID" />
+          </Key>
+          <Property Name="SubSectionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SectionID" Type="int" Nullable="false" />
+          <Property Name="SubSectionOrder" Type="int" Nullable="false" />
+          <Property Name="SubSectionContent" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="AddTime" Type="datetime" Nullable="false" />
+          <Property Name="Article" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -58,47 +74,72 @@
           <Property Name="ReadTime" Type="datetime" />
           <Property Name="ReadSection" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <Association Name="FK_BookInfo_BookList">
+          <End Role="BookList" Type="Self.BookList" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="BookSection" Type="Self.BookSection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookList">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="BookSection">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SubBookInfo_BookInfo">
+          <End Role="BookSection" Type="Self.BookSection" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SubBookSection" Type="Self.SubBookSection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookSection">
+              <PropertyRef Name="SectionlD" />
+            </Principal>
+            <Dependent Role="SubBookSection">
+              <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserReadHistory_BookList">
+          <End Role="BookList" Type="Self.BookList" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserReadHistory" Type="Self.UserReadHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookList">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="UserReadHistory">
+              <PropertyRef Name="BookListID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="YL_LibaryModelStoreContainer">
-          <EntitySet Name="BookInfo" EntityType="Self.BookInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookList" EntityType="Self.BookList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BookSection" EntityType="Self.BookSection" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BookType" EntityType="Self.BookType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubBookSection" EntityType="Self.SubBookSection" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserReadHistory" EntityType="Self.UserReadHistory" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_BookInfo_BookList" Association="Self.FK_BookInfo_BookList">
+            <End Role="BookList" EntitySet="BookList" />
+            <End Role="BookSection" EntitySet="BookSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubBookInfo_BookInfo" Association="Self.FK_SubBookInfo_BookInfo">
+            <End Role="BookSection" EntitySet="BookSection" />
+            <End Role="SubBookSection" EntitySet="SubBookSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserReadHistory_BookList" Association="Self.FK_UserReadHistory_BookList">
+            <End Role="BookList" EntitySet="BookList" />
+            <End Role="UserReadHistory" EntitySet="UserReadHistory" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="YL_LibaryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="BookInfo">
-          <Key>
-            <PropertyRef Name="BookInfoID" />
-          </Key>
-          <Property Name="BookInfoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BooklD" Type="Int32" Nullable="false" />
-          <Property Name="SectionOrder" Type="Int32" Nullable="false" />
-          <Property Name="SectionContent" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="SubSectionOrder" Type="Int32" />
-          <Property Name="SubSectionContent" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="BookListType" Type="Byte" Nullable="false" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="BookList">
-          <Key>
-            <PropertyRef Name="BookID" />
-          </Key>
-          <Property Name="BookID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Abstract" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Author" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="BookType" Type="Int32" />
-          <Property Name="State" Type="Byte" Nullable="false" />
-          <Property Name="TopTime" Type="DateTime" Precision="3" />
-          <Property Name="Recommend" Type="Boolean" />
-          <Property Name="ClickNum" Type="Int32" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CoverIMG" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
@@ -120,52 +161,128 @@
           <Property Name="BookListID" Type="Int32" />
           <Property Name="ReadTime" Type="DateTime" Precision="3" />
           <Property Name="ReadSection" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BookList" Relationship="YL_LibaryModel.FK_UserReadHistory_BookList" FromRole="UserReadHistory" ToRole="BookList" />
         </EntityType>
-        <EntityContainer Name="YL_LibaryEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BookInfo" EntityType="Self.BookInfo" />
-          <EntitySet Name="BookList" EntityType="Self.BookList" />
+        <EntityContainer Name="YL_LibaryEntities" annotation:LazyLoadingEnabled="false">
           <EntitySet Name="User" EntityType="Self.User" />
           <EntitySet Name="UserReadHistory" EntityType="Self.UserReadHistory" />
+          <EntitySet Name="BookType" EntityType="YL_LibaryModel.BookType" />
+          <EntitySet Name="BookList" EntityType="YL_LibaryModel.BookList" />
+          <EntitySet Name="BookSection" EntityType="YL_LibaryModel.BookSection" />
+          <EntitySet Name="SubBookSection" EntityType="YL_LibaryModel.SubBookSection" />
+          <AssociationSet Name="FK_BookInfo_BookList" Association="YL_LibaryModel.FK_BookInfo_BookList">
+            <End Role="BookList" EntitySet="BookList" />
+            <End Role="BookSection" EntitySet="BookSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserReadHistory_BookList" Association="YL_LibaryModel.FK_UserReadHistory_BookList">
+            <End Role="BookList" EntitySet="BookList" />
+            <End Role="UserReadHistory" EntitySet="UserReadHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubBookInfo_BookInfo" Association="YL_LibaryModel.FK_SubBookInfo_BookInfo">
+            <End Role="BookSection" EntitySet="BookSection" />
+            <End Role="SubBookSection" EntitySet="SubBookSection" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="BookType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="BookList">
+          <Key>
+            <PropertyRef Name="BookID" />
+          </Key>
+          <Property Name="BookID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Abstract" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Author" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CoverIMG" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BookType" Type="Int32" />
+          <Property Name="State" Type="Byte" Nullable="false" />
+          <Property Name="TopTime" Type="DateTime" Precision="3" />
+          <Property Name="Recommend" Type="Boolean" />
+          <Property Name="ClickNum" Type="Int32" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BookSection" Relationship="YL_LibaryModel.FK_BookInfo_BookList" FromRole="BookList" ToRole="BookSection" />
+          <NavigationProperty Name="UserReadHistory" Relationship="YL_LibaryModel.FK_UserReadHistory_BookList" FromRole="BookList" ToRole="UserReadHistory" />
+        </EntityType>
+        <EntityType Name="BookSection">
+          <Key>
+            <PropertyRef Name="SectionlD" />
+          </Key>
+          <Property Name="SectionlD" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookID" Type="Int32" Nullable="false" />
+          <Property Name="SectionOrder" Type="Int32" />
+          <Property Name="SectionContent" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BookList" Relationship="YL_LibaryModel.FK_BookInfo_BookList" FromRole="BookSection" ToRole="BookList" />
+          <NavigationProperty Name="SubBookSection" Relationship="YL_LibaryModel.FK_SubBookInfo_BookInfo" FromRole="BookSection" ToRole="SubBookSection" />
+        </EntityType>
+        <EntityType Name="SubBookSection">
+          <Key>
+            <PropertyRef Name="SubSectionID" />
+          </Key>
+          <Property Name="SubSectionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SectionID" Type="Int32" Nullable="false" />
+          <Property Name="SubSectionOrder" Type="Int32" Nullable="false" />
+          <Property Name="SubSectionContent" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="BookSection" Relationship="YL_LibaryModel.FK_SubBookInfo_BookInfo" FromRole="SubBookSection" ToRole="BookSection" />
+          <Property Name="Article" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_BookInfo_BookList">
+          <End Type="YL_LibaryModel.BookList" Role="BookList" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="YL_LibaryModel.BookSection" Role="BookSection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookList">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="BookSection">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserReadHistory_BookList">
+          <End Type="YL_LibaryModel.BookList" Role="BookList" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="YL_LibaryModel.UserReadHistory" Role="UserReadHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookList">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="UserReadHistory">
+              <PropertyRef Name="BookListID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SubBookInfo_BookInfo">
+          <End Type="YL_LibaryModel.BookSection" Role="BookSection" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="YL_LibaryModel.SubBookSection" Role="SubBookSection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookSection">
+              <PropertyRef Name="SectionlD" />
+            </Principal>
+            <Dependent Role="SubBookSection">
+              <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="YL_LibaryModelStoreContainer" CdmEntityContainer="YL_LibaryEntities">
-          <EntitySetMapping Name="BookInfo">
-            <EntityTypeMapping TypeName="YL_LibaryModel.BookInfo">
-              <MappingFragment StoreEntitySet="BookInfo">
-                <ScalarProperty Name="BookInfoID" ColumnName="BookInfoID" />
-                <ScalarProperty Name="BooklD" ColumnName="BooklD" />
-                <ScalarProperty Name="SectionOrder" ColumnName="SectionOrder" />
-                <ScalarProperty Name="SectionContent" ColumnName="SectionContent" />
-                <ScalarProperty Name="SubSectionOrder" ColumnName="SubSectionOrder" />
-                <ScalarProperty Name="SubSectionContent" ColumnName="SubSectionContent" />
-                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
-                <ScalarProperty Name="BookListType" ColumnName="BookListType" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BookList">
-            <EntityTypeMapping TypeName="YL_LibaryModel.BookList">
-              <MappingFragment StoreEntitySet="BookList">
-                <ScalarProperty Name="CoverIMG" ColumnName="CoverIMG" />
-                <ScalarProperty Name="BookID" ColumnName="BookID" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Abstract" ColumnName="Abstract" />
-                <ScalarProperty Name="Author" ColumnName="Author" />
-                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
-                <ScalarProperty Name="BookType" ColumnName="BookType" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="TopTime" ColumnName="TopTime" />
-                <ScalarProperty Name="Recommend" ColumnName="Recommend" />
-                <ScalarProperty Name="ClickNum" ColumnName="ClickNum" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="YL_LibaryModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -190,7 +307,58 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="BookType">
+            <EntityTypeMapping TypeName="YL_LibaryModel.BookType">
+              <MappingFragment StoreEntitySet="BookType">
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BookList">
+            <EntityTypeMapping TypeName="YL_LibaryModel.BookList">
+              <MappingFragment StoreEntitySet="BookList">
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="ClickNum" ColumnName="ClickNum" />
+                <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+                <ScalarProperty Name="TopTime" ColumnName="TopTime" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="BookType" ColumnName="BookType" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="CoverIMG" ColumnName="CoverIMG" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
+                <ScalarProperty Name="Abstract" ColumnName="Abstract" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BookSection">
+            <EntityTypeMapping TypeName="YL_LibaryModel.BookSection">
+              <MappingFragment StoreEntitySet="BookSection">
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="SectionContent" ColumnName="SectionContent" />
+                <ScalarProperty Name="SectionOrder" ColumnName="SectionOrder" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="SectionlD" ColumnName="SectionlD" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubBookSection">
+            <EntityTypeMapping TypeName="YL_LibaryModel.SubBookSection">
+              <MappingFragment StoreEntitySet="SubBookSection">
+                <ScalarProperty Name="Article" ColumnName="Article" />
+                <ScalarProperty Name="AddTime" ColumnName="AddTime" />
+                <ScalarProperty Name="SubSectionContent" ColumnName="SubSectionContent" />
+                <ScalarProperty Name="SubSectionOrder" ColumnName="SubSectionOrder" />
+                <ScalarProperty Name="SectionID" ColumnName="SectionID" />
+                <ScalarProperty Name="SubSectionID" ColumnName="SubSectionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

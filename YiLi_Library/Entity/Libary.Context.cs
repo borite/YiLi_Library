@@ -18,6 +18,7 @@ namespace YiLi_Library.Entity
         public YL_LibaryEntities()
             : base("name=YL_LibaryEntities")
         {
+            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -25,9 +26,11 @@ namespace YiLi_Library.Entity
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<BookInfo> BookInfo { get; set; }
-        public virtual DbSet<BookList> BookList { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserReadHistory> UserReadHistory { get; set; }
+        public virtual DbSet<BookType> BookType { get; set; }
+        public virtual DbSet<BookList> BookList { get; set; }
+        public virtual DbSet<BookSection> BookSection { get; set; }
+        public virtual DbSet<SubBookSection> SubBookSection { get; set; }
     }
 }

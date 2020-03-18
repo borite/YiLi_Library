@@ -5,11 +5,16 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="96d5ae995f8a472ab916f1dd0fe1f9d6" Name="Diagram1">
-        <EntityTypeShape EntityType="YL_LibaryModel.BookInfo" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="YL_LibaryModel.BookList" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="YL_LibaryModel.User" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="YL_LibaryModel.UserReadHistory" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
-      </Diagram>
+        <EntityTypeShape EntityType="YL_LibaryModel.User" Width="1.5" PointX="7.5" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="YL_LibaryModel.UserReadHistory" Width="1.5" PointX="5.5" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="YL_LibaryModel.BookType" Width="1.5" PointX="4.625" PointY="5.25" />
+        <EntityTypeShape EntityType="YL_LibaryModel.BookList" Width="1.5" PointX="3.25" PointY="0.75" />
+        <EntityTypeShape EntityType="YL_LibaryModel.BookSection" Width="1.5" PointX="5.5" PointY="8.25" />
+        <EntityTypeShape EntityType="YL_LibaryModel.SubBookSection" Width="1.5" PointX="7.75" PointY="8.5" />
+        <AssociationConnector Association="YL_LibaryModel.FK_BookInfo_BookList" />
+        <AssociationConnector Association="YL_LibaryModel.FK_UserReadHistory_BookList" />
+        <AssociationConnector Association="YL_LibaryModel.FK_SubBookInfo_BookInfo" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
