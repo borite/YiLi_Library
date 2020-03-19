@@ -14,8 +14,17 @@ namespace YiLi_Library.Entity
     
     public partial class BookType
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public BookType()
+        {
+            this.BookList = new HashSet<BookList>();
+        }
+    
         public int ID { get; set; }
         public string TypeName { get; set; }
         public System.DateTime AddTime { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BookList> BookList { get; set; }
     }
 }

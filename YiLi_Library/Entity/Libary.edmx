@@ -75,9 +75,7 @@
           <Property Name="ReadSection" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <Association Name="FK_BookInfo_BookList">
-          <End Role="BookList" Type="Self.BookList" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="BookList" Type="Self.BookList" Multiplicity="1" />
           <End Role="BookSection" Type="Self.BookSection" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="BookList">
@@ -85,6 +83,18 @@
             </Principal>
             <Dependent Role="BookSection">
               <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BookList_BookType">
+          <End Role="BookType" Type="Self.BookType" Multiplicity="0..1" />
+          <End Role="BookList" Type="Self.BookList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="BookList">
+              <PropertyRef Name="BookType" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -126,6 +136,10 @@
           <AssociationSet Name="FK_BookInfo_BookList" Association="Self.FK_BookInfo_BookList">
             <End Role="BookList" EntitySet="BookList" />
             <End Role="BookSection" EntitySet="BookSection" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BookList_BookType" Association="Self.FK_BookList_BookType">
+            <End Role="BookType" EntitySet="BookType" />
+            <End Role="BookList" EntitySet="BookList" />
           </AssociationSet>
           <AssociationSet Name="FK_SubBookInfo_BookInfo" Association="Self.FK_SubBookInfo_BookInfo">
             <End Role="BookSection" EntitySet="BookSection" />
@@ -182,6 +196,10 @@
             <End Role="BookSection" EntitySet="BookSection" />
             <End Role="SubBookSection" EntitySet="SubBookSection" />
           </AssociationSet>
+          <AssociationSet Name="FK_BookList_BookType" Association="YL_LibaryModel.FK_BookList_BookType">
+            <End Role="BookType" EntitySet="BookType" />
+            <End Role="BookList" EntitySet="BookList" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="BookType">
           <Key>
@@ -190,6 +208,7 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TypeName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="AddTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="BookList" Relationship="YL_LibaryModel.FK_BookList_BookType" FromRole="BookType" ToRole="BookList" />
         </EntityType>
         <EntityType Name="BookList">
           <Key>
@@ -209,6 +228,7 @@
           <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="BookSection" Relationship="YL_LibaryModel.FK_BookInfo_BookList" FromRole="BookList" ToRole="BookSection" />
           <NavigationProperty Name="UserReadHistory" Relationship="YL_LibaryModel.FK_UserReadHistory_BookList" FromRole="BookList" ToRole="UserReadHistory" />
+          <NavigationProperty Name="BookType1" Relationship="YL_LibaryModel.FK_BookList_BookType" FromRole="BookList" ToRole="BookType" />
         </EntityType>
         <EntityType Name="BookSection">
           <Key>
@@ -274,6 +294,18 @@
             </Principal>
             <Dependent Role="SubBookSection">
               <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BookList_BookType">
+          <End Type="YL_LibaryModel.BookType" Role="BookType" Multiplicity="0..1" />
+          <End Type="YL_LibaryModel.BookList" Role="BookList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="BookList">
+              <PropertyRef Name="BookType" />
             </Dependent>
           </ReferentialConstraint>
         </Association>

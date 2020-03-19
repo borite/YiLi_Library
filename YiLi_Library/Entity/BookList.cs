@@ -38,5 +38,6 @@ namespace YiLi_Library.Entity
         public virtual ICollection<BookSection> BookSection { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserReadHistory> UserReadHistory { get; set; }
+        public virtual BookType BookType1 { get; set; }
     }
 }

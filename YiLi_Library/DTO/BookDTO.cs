@@ -28,10 +28,7 @@ namespace YiLi_Library.DTO
             /// 封面图
             /// </summary>
             public string CoverIMG { get; set; }
-            /// <summary>
-            /// 发布时间
-            /// </summary>
-            public System.DateTime AddTime { get; set; }
+         
             /// <summary>
             /// 图书类型
             /// </summary>
@@ -127,6 +124,36 @@ namespace YiLi_Library.DTO
             ///一级章节排序
             /// </summary>
             public int SectionOrder { get; set; }
+            /// <summary>
+            /// 一级章节名字
+            /// </summary>
+            public string SectionContent { get; set; }
+
+           
+
+    
+         
+            /// <summary>
+            /// 后台备注
+            /// </summary>
+            public string Remark { get; set; }
+        }
+        /// <summary>
+        /// 更新一级章节信息
+        /// </summary>
+        public class UpdateSection
+        {
+
+
+            //public int ID { get; set; }
+            ///// <summary>
+            ///// 书籍ID 
+            ///// </summary>
+            //public int BooklD { get; set; }
+            /// <summary>
+            ///一级章节排序
+            /// </summary>
+            public int SectionOrder { get; set; }
 
             /// <summary>
             /// 章节ID
@@ -138,16 +165,9 @@ namespace YiLi_Library.DTO
             /// 一级章节内容
             /// </summary>
             public string SectionContent { get; set; }
-            /// <summary>
-            /// 二级章节排序
-            /// </summary>
-            public Nullable<int> SubSectionOrder { get; set; }
-            /// <summary>
-            /// 二级章节内容
-            /// </summary>
-            public string SubSectionContent { get; set; }
-    
-         
+     
+
+
             /// <summary>
             /// 后台备注
             /// </summary>
@@ -176,6 +196,70 @@ namespace YiLi_Library.DTO
             /// </summary>
             public string Article { get; set; }
         
+        }
+
+        /// <summary>
+        /// 更新二级章节信息
+        /// </summary>
+        public class UpdateSubSection
+        {
+
+           
+            /// <summary>
+            /// 二级章节ID
+            /// </summary>
+            public int SubSectionID { get; set; }
+            /// <summary>
+            /// 二级章节排序
+            /// </summary>
+            public int SubSectionOrder { get; set; }
+            /// <summary>
+            /// 二级章节内容
+            /// </summary>
+            public string SubSectionContent { get; set; }
+            /// <summary>
+            /// 文章正文
+            /// </summary>
+            public string Article { get; set; }
+
+
+
+            /// <summary>
+            /// 后台备注
+            /// </summary>
+            public string Remark { get; set; }
+        }
+        /// <summary>
+        /// 种类
+        /// </summary>
+
+        public class CreatBookTypeDTO
+        {
+            /// <summary>
+            /// 种类名字
+            /// </summary>
+            public string TypeName { get; set; }
+          
+
+
+        }
+        /// <summary>
+        /// 更新书类型种类
+        /// </summary>
+
+        public class UpdateBookTypeDTO
+        {
+            /// <summary>
+            /// 种类ID
+            /// </summary>
+            public int ID { get; set; }
+            /// <summary>
+            /// 种类名字
+            /// </summary>
+            public string TypeName { get; set; }
+
+
+
         }
 
     }
