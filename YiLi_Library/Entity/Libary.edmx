@@ -54,15 +54,24 @@
         </EntityType>
         <EntityType Name="User">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="OpenID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OpenID" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="OpenID" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="HeadImg" Type="nvarchar" MaxLength="200" />
           <Property Name="WeChatNickame" Type="nvarchar" MaxLength="100" />
           <Property Name="JobID" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="30" />
-          <Property Name="ReadTime" Type="datetime" />
+          <Property Name="ReadTime" Type="timestamp" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="UserAccount">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OpenID" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="jobID" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Department" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="UserReadHistory">
           <Key>
@@ -71,8 +80,8 @@
           <Property Name="HisID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OpenID" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="BookListID" Type="int" />
-          <Property Name="ReadTime" Type="datetime" />
-          <Property Name="ReadSection" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReadSection" Type="int" />
+          <Property Name="ReadTime" Type="timestamp" StoreGeneratedPattern="Computed" />
         </EntityType>
         <Association Name="FK_BookInfo_BookList">
           <End Role="BookList" Type="Self.BookList" Multiplicity="1" />
@@ -112,17 +121,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserReadHistory_BookList">
-          <End Role="BookList" Type="Self.BookList" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name="FK_UserReadHistory_BookSection">
+          <End Role="BookSection" Type="Self.BookSection" Multiplicity="0..1" />
           <End Role="UserReadHistory" Type="Self.UserReadHistory" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="BookList">
-              <PropertyRef Name="BookID" />
+            <Principal Role="BookSection">
+              <PropertyRef Name="SectionlD" />
             </Principal>
             <Dependent Role="UserReadHistory">
-              <PropertyRef Name="BookListID" />
+              <PropertyRef Name="ReadSection" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -132,6 +139,7 @@
           <EntitySet Name="BookType" EntityType="Self.BookType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubBookSection" EntityType="Self.SubBookSection" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserAccount" EntityType="Self.UserAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserReadHistory" EntityType="Self.UserReadHistory" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_BookInfo_BookList" Association="Self.FK_BookInfo_BookList">
             <End Role="BookList" EntitySet="BookList" />
@@ -145,8 +153,8 @@
             <End Role="BookSection" EntitySet="BookSection" />
             <End Role="SubBookSection" EntitySet="SubBookSection" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserReadHistory_BookList" Association="Self.FK_UserReadHistory_BookList">
-            <End Role="BookList" EntitySet="BookList" />
+          <AssociationSet Name="FK_UserReadHistory_BookSection" Association="Self.FK_UserReadHistory_BookSection">
+            <End Role="BookSection" EntitySet="BookSection" />
             <End Role="UserReadHistory" EntitySet="UserReadHistory" />
           </AssociationSet>
         </EntityContainer>
@@ -154,32 +162,7 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="YL_LibaryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="User">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OpenID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="HeadImg" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="WeChatNickame" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="JobID" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="ReadTime" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="UserReadHistory">
-          <Key>
-            <PropertyRef Name="HisID" />
-          </Key>
-          <Property Name="HisID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OpenID" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="BookListID" Type="Int32" />
-          <Property Name="ReadTime" Type="DateTime" Precision="3" />
-          <Property Name="ReadSection" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="BookList" Relationship="YL_LibaryModel.FK_UserReadHistory_BookList" FromRole="UserReadHistory" ToRole="BookList" />
-        </EntityType>
         <EntityContainer Name="YL_LibaryEntities" annotation:LazyLoadingEnabled="false">
-          <EntitySet Name="User" EntityType="Self.User" />
-          <EntitySet Name="UserReadHistory" EntityType="Self.UserReadHistory" />
           <EntitySet Name="BookType" EntityType="YL_LibaryModel.BookType" />
           <EntitySet Name="BookList" EntityType="YL_LibaryModel.BookList" />
           <EntitySet Name="BookSection" EntityType="YL_LibaryModel.BookSection" />
@@ -187,10 +170,6 @@
           <AssociationSet Name="FK_BookInfo_BookList" Association="YL_LibaryModel.FK_BookInfo_BookList">
             <End Role="BookList" EntitySet="BookList" />
             <End Role="BookSection" EntitySet="BookSection" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserReadHistory_BookList" Association="YL_LibaryModel.FK_UserReadHistory_BookList">
-            <End Role="BookList" EntitySet="BookList" />
-            <End Role="UserReadHistory" EntitySet="UserReadHistory" />
           </AssociationSet>
           <AssociationSet Name="FK_SubBookInfo_BookInfo" Association="YL_LibaryModel.FK_SubBookInfo_BookInfo">
             <End Role="BookSection" EntitySet="BookSection" />
@@ -200,7 +179,14 @@
             <End Role="BookType" EntitySet="BookType" />
             <End Role="BookList" EntitySet="BookList" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="UserAccount" EntityType="YL_LibaryModel.UserAccount" />
+          <EntitySet Name="User" EntityType="YL_LibaryModel.User" />
+          <EntitySet Name="UserReadHistory" EntityType="YL_LibaryModel.UserReadHistory" />
+          <AssociationSet Name="FK_UserReadHistory_BookSection" Association="YL_LibaryModel.FK_UserReadHistory_BookSection">
+            <End Role="BookSection" EntitySet="BookSection" />
+            <End Role="UserReadHistory" EntitySet="UserReadHistory" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="BookType">
           <Key>
             <PropertyRef Name="ID" />
@@ -227,7 +213,6 @@
           <Property Name="ClickNum" Type="Int32" />
           <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="BookSection" Relationship="YL_LibaryModel.FK_BookInfo_BookList" FromRole="BookList" ToRole="BookSection" />
-          <NavigationProperty Name="UserReadHistory" Relationship="YL_LibaryModel.FK_UserReadHistory_BookList" FromRole="BookList" ToRole="UserReadHistory" />
           <NavigationProperty Name="BookType1" Relationship="YL_LibaryModel.FK_BookList_BookType" FromRole="BookList" ToRole="BookType" />
         </EntityType>
         <EntityType Name="BookSection">
@@ -242,6 +227,7 @@
           <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="BookList" Relationship="YL_LibaryModel.FK_BookInfo_BookList" FromRole="BookSection" ToRole="BookList" />
           <NavigationProperty Name="SubBookSection" Relationship="YL_LibaryModel.FK_SubBookInfo_BookInfo" FromRole="BookSection" ToRole="SubBookSection" />
+          <NavigationProperty Name="UserReadHistory" Relationship="YL_LibaryModel.FK_UserReadHistory_BookSection" FromRole="BookSection" ToRole="UserReadHistory" />
         </EntityType>
         <EntityType Name="SubBookSection">
           <Key>
@@ -266,20 +252,6 @@
             </Principal>
             <Dependent Role="BookSection">
               <PropertyRef Name="BookID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserReadHistory_BookList">
-          <End Type="YL_LibaryModel.BookList" Role="BookList" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="YL_LibaryModel.UserReadHistory" Role="UserReadHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="BookList">
-              <PropertyRef Name="BookID" />
-            </Principal>
-            <Dependent Role="UserReadHistory">
-              <PropertyRef Name="BookListID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -309,36 +281,56 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="UserAccount">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OpenID" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="jobID" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="OpenID" />
+          </Key>
+          <Property Name="OpenID" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="HeadImg" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="WeChatNickame" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="JobID" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="ReadTime" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="UserReadHistory">
+          <Key>
+            <PropertyRef Name="HisID" />
+          </Key>
+          <Property Name="HisID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OpenID" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="BookListID" Type="Int32" />
+          <Property Name="ReadSection" Type="Int32" />
+          <Property Name="ReadTime" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="BookSection" Relationship="YL_LibaryModel.FK_UserReadHistory_BookSection" FromRole="UserReadHistory" ToRole="BookSection" />
+        </EntityType>
+        <Association Name="FK_UserReadHistory_BookSection">
+          <End Type="YL_LibaryModel.BookSection" Role="BookSection" Multiplicity="0..1" />
+          <End Type="YL_LibaryModel.UserReadHistory" Role="UserReadHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BookSection">
+              <PropertyRef Name="SectionlD" />
+            </Principal>
+            <Dependent Role="UserReadHistory">
+              <PropertyRef Name="ReadSection" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="YL_LibaryModelStoreContainer" CdmEntityContainer="YL_LibaryEntities">
-          <EntitySetMapping Name="User">
-            <EntityTypeMapping TypeName="YL_LibaryModel.User">
-              <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="OpenID" ColumnName="OpenID" />
-                <ScalarProperty Name="HeadImg" ColumnName="HeadImg" />
-                <ScalarProperty Name="WeChatNickame" ColumnName="WeChatNickame" />
-                <ScalarProperty Name="JobID" ColumnName="JobID" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="ReadTime" ColumnName="ReadTime" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserReadHistory">
-            <EntityTypeMapping TypeName="YL_LibaryModel.UserReadHistory">
-              <MappingFragment StoreEntitySet="UserReadHistory">
-                <ScalarProperty Name="HisID" ColumnName="HisID" />
-                <ScalarProperty Name="OpenID" ColumnName="OpenID" />
-                <ScalarProperty Name="BookListID" ColumnName="BookListID" />
-                <ScalarProperty Name="ReadTime" ColumnName="ReadTime" />
-                <ScalarProperty Name="ReadSection" ColumnName="ReadSection" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="BookType">
             <EntityTypeMapping TypeName="YL_LibaryModel.BookType">
               <MappingFragment StoreEntitySet="BookType">
@@ -387,6 +379,40 @@
                 <ScalarProperty Name="SubSectionOrder" ColumnName="SubSectionOrder" />
                 <ScalarProperty Name="SectionID" ColumnName="SectionID" />
                 <ScalarProperty Name="SubSectionID" ColumnName="SubSectionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserAccount">
+            <EntityTypeMapping TypeName="YL_LibaryModel.UserAccount">
+              <MappingFragment StoreEntitySet="UserAccount">
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="jobID" ColumnName="jobID" />
+                <ScalarProperty Name="OpenID" ColumnName="OpenID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="YL_LibaryModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="ReadTime" ColumnName="ReadTime" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="JobID" ColumnName="JobID" />
+                <ScalarProperty Name="WeChatNickame" ColumnName="WeChatNickame" />
+                <ScalarProperty Name="HeadImg" ColumnName="HeadImg" />
+                <ScalarProperty Name="OpenID" ColumnName="OpenID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserReadHistory">
+            <EntityTypeMapping TypeName="YL_LibaryModel.UserReadHistory">
+              <MappingFragment StoreEntitySet="UserReadHistory">
+                <ScalarProperty Name="ReadTime" ColumnName="ReadTime" />
+                <ScalarProperty Name="ReadSection" ColumnName="ReadSection" />
+                <ScalarProperty Name="BookListID" ColumnName="BookListID" />
+                <ScalarProperty Name="OpenID" ColumnName="OpenID" />
+                <ScalarProperty Name="HisID" ColumnName="HisID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

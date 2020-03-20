@@ -159,6 +159,9 @@
     <Compile Include="Entity\User.cs">
       <DependentUpon>Libary.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\UserAccount.cs">
+      <DependentUpon>Libary.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\UserReadHistory.cs">
       <DependentUpon>Libary.tt</DependentUpon>
     </Compile>

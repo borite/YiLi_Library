@@ -17,9 +17,9 @@ namespace YiLi_Library.Entity
         public int HisID { get; set; }
         public string OpenID { get; set; }
         public Nullable<int> BookListID { get; set; }
-        public Nullable<System.DateTime> ReadTime { get; set; }
-        public string ReadSection { get; set; }
+        public Nullable<int> ReadSection { get; set; }
+        public byte[] ReadTime { get; set; }
     
-        public virtual BookList BookList { get; set; }
+        public virtual BookSection BookSection { get; set; }
     }
 }

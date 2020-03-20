@@ -12,13 +12,12 @@ namespace YiLi_Library.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class UserAccount
     {
+        public int ID { get; set; }
         public string OpenID { get; set; }
-        public string HeadImg { get; set; }
-        public string WeChatNickame { get; set; }
-        public string JobID { get; set; }
+        public string jobID { get; set; }
         public string UserName { get; set; }
-        public byte[] ReadTime { get; set; }
+        public string Department { get; set; }
     }
 }

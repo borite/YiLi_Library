@@ -18,6 +18,7 @@ namespace YiLi_Library.Entity
         public BookSection()
         {
             this.SubBookSection = new HashSet<SubBookSection>();
+            this.UserReadHistory = new HashSet<UserReadHistory>();
         }
     
         public int SectionlD { get; set; }
@@ -30,5 +31,7 @@ namespace YiLi_Library.Entity
         public virtual BookList BookList { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubBookSection> SubBookSection { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserReadHistory> UserReadHistory { get; set; }
     }
 }

@@ -262,5 +262,30 @@ namespace YiLi_Library.DTO
 
         }
 
+
+        /// <summary>
+        /// 更新某本书的历史信息
+        /// </summary>
+        public class UpdateUserHistory
+        {
+
+
+            public string OpenID { get; set; }
+            /// <summary>
+            /// 书籍的ID
+            /// </summary>
+            public int BookID { get; set; }
+            /// <summary>
+            /// 章节ID
+            /// </summary>
+            public  int ReadSection { get; set; }
+            /// <summary>
+            /// 阅读的章节的时间记录 
+            /// </summary>
+            public byte[] ReadTime { get; set; }
+       
+
+        }
+
     }
 }

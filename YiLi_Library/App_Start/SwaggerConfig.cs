@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Xml;
 using System.IO;
+using System.Linq;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -41,6 +42,7 @@ namespace YiLi_Library
                         c.SingleApiVersion("v1", "ÒÁÀûÍ¼ÊéAPI");
                         c.IncludeXmlComments(GetXmlCommentsPath());
                         c.CustomProvider((defaultProvider) => new CachingSwaggerProvider(defaultProvider));
+                        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
                         //c.PrettyPrint();

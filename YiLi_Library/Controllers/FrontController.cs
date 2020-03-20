@@ -153,8 +153,6 @@ namespace YiLi_Library.Controllers
 
         }
 
-
-
         /// <summary>
         /// 获取直传图片签名,签名有效期60分钟,filename:前端上传的文件名（带后缀名），mtype:1.加封面图
         /// </summary>
@@ -209,6 +207,8 @@ namespace YiLi_Library.Controllers
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
+
+        [HttpPost, Route("CreatSubBookInfo")]
         public IHttpActionResult CreatSubBookInfo(CreatSubTitleDTO obj)
         {
             SubBookSection res = new SubBookSection();
@@ -216,6 +216,7 @@ namespace YiLi_Library.Controllers
             res.SectionID = obj.SectionID;
             res.SubSectionOrder = obj.SubSectionOrder;
             res.SubSectionContent = obj.SubSectionContent;
+            res.Article = obj.Article;
             res.AddTime = DateTime.Now;
             YL.SubBookSection.Add(res);
             YL.SaveChanges();
@@ -287,7 +288,49 @@ namespace YiLi_Library.Controllers
 
         }
 
+        /// <summary>
+        /// 通过二级章节ID获取某本书的所有信息
+        /// </summary>
+        /// <param name="SubSectionID">二级标题的ID</param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
 
+        [HttpGet, Route("GetBookAllInfo")]
+        public IHttpActionResult GetBookAllInfo(int SubSectionID, int pageSize, int pageIndex)
+        {
+
+            var count = YL.SubBookSection.Where(a => a.SubSectionID == SubSectionID).Count();
+            var val = YL.SubBookSection.Where(a => a.SubSectionID == SubSectionID).Select(a => new
+            {
+
+                a.SubSectionID, //二级章节ID
+                a.SectionID, //一级章节ID
+                a.SubSectionOrder, //排序
+                a.AddTime,//录入时间
+                a.SubSectionContent, //二级章节名字
+                a.Article, //正文
+                a.BookSection.BookID,//书籍ID
+                a.BookSection.SectionOrder,//一级标章节排序
+                a.BookSection.SectionContent,//一级章节的名字
+                a.BookSection.BookList.Title,//书籍名称          
+                a.BookSection.BookList.Abstract,
+                a.BookSection.BookList.Author,
+                a.BookSection.BookList.BookType,
+                a.BookSection.BookList.State,
+                a.BookSection.BookList.Recommend,
+                a.BookSection.BookList.ClickNum, //阅读人数
+                a.BookSection.BookList.Remark
+
+
+
+
+
+            }).OrderBy(a => a.SubSectionOrder).Skip(pageSize * (pageIndex - 1))
+                                    .Take(pageSize);
+            return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = count, Data = val });
+
+        }
 
         /// <summary>
         /// 一级章节更新
@@ -335,6 +378,7 @@ namespace YiLi_Library.Controllers
         /// 前端查看书的列表
         /// </summary>
         /// <returns></returns>
+        [HttpGet,Route("GetBookList")]
         public IHttpActionResult GetBookList()
         {
             var cc = YL.BookList.Where(a => a.State == 1).OrderByDescending(a => a.TopTime).ThenByDescending(b => b.BookID).ToList();
@@ -344,13 +388,47 @@ namespace YiLi_Library.Controllers
         }
 
 
+        /// <summary>
+        /// 增加或者更新记录（如果bookID没有记录 新加一条记录,并且阅读量+1，如果有记录就更新记录）
+        /// </summary>
+        /// <param name="obj">更新需要传入：ReadTime ReadSection  插入需要传入：BookID ReadSection（这个传入的是BookSectionID）</param>
+        /// <returns></returns>
 
-
-
-        //更新 阅读时间 阅读的章节 （当用户退出时使用）
-
-        public IHttpActionResult UpdateHistory()
+        [HttpPut,Route("UpdateHistory")]
+        public IHttpActionResult UpdateHistory(UpdateUserHistory obj)
         {
+            var cc=YL.UserReadHistory.Where(a=>a.OpenID== obj.OpenID&&a.BookListID==obj.BookID).FirstOrDefault();
+            if (cc==null) //没有记录增加一条记录
+            {
+                //个人用户增加记录
+                UserReadHistory res = new UserReadHistory();
+                res.BookListID = obj.BookID; //书的ID
+                res.ReadTime =obj.ReadTime;//时间输入
+               
+                res.ReadSection = obj.ReadSection; //章节ID
+                res.OpenID = obj.OpenID;
+              
+                //在图书列表加一个用户的阅读量
+                YL.UserReadHistory.Add(res);
+                var c = YL.BookList.Where(a => a.BookID == obj.BookID).First();
+                c.ClickNum += 1;
+
+                
+                YL.SaveChanges();
+                return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = "增加书籍成功", Data = cc });
+
+            }
+            else //更细一条记录
+            {
+
+               cc.ReadTime = obj.ReadTime;//更新阅读章节时间
+              
+
+                cc.ReadSection = obj.ReadSection; //更新章节ID
+                YL.SaveChanges();
+                return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = "更新书籍成功", Data = cc });
+            }
+
 
 
 
@@ -358,12 +436,31 @@ namespace YiLi_Library.Controllers
         }
 
 
+        /// <summary>
+        /// 查询某个书籍历史记录
+        /// </summary>
+        /// <param name="OpenID"></param>
+        /// <param name="BookID">书籍ID</param>
+        /// <returns></returns>
+         [HttpGet,Route("GetBookHistory")]
+        public IHttpActionResult GetBookHistory(string OpenID ,int BookID)
+        {
 
+            var cc = YL.UserReadHistory.Where(a => a.OpenID == OpenID && a.BookListID == BookID).Select(a=> new 
+            { 
+                a.HisID, //历史记录Id
+              
+                a.BookSection.SectionOrder,
+                a.BookSection.SectionContent ,//章节名字
+                a.ReadTime ,//已经阅读时间
+                a.ReadSection //一级章节ID
 
-        // 插入一条历史记录（有记录不操作 没记录输入  数据  ）
+            
+            }
+            ).FirstOrDefault();
 
-
-
+            return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = "查询书籍历史记录成功", Data = cc });
+        }
 
 
     }
