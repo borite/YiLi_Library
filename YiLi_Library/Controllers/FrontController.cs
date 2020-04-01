@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -460,6 +461,23 @@ namespace YiLi_Library.Controllers
             ).FirstOrDefault();
 
             return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = "查询书籍历史记录成功", Data = cc });
+        }
+
+        /// <summary>
+        /// 书阅读量+1
+        /// </summary>
+        /// <param name="BookID">书籍ID 返回0没有找到数据，返回1执行成功</param>
+        /// <returns></returns>
+
+        [HttpPut,Route ("BookClick")]
+        public IHttpActionResult BookClick(int BookID)
+        {
+            
+            int cc = YL.Database.ExecuteSqlCommand("update BookList set ClickNum=ClickNum+1 where BookID=@BookID", new SqlParameter("@BookID", BookID));
+
+            return Content(HttpStatusCode.OK, new resultInfo { Code = 200, Message = "增加读书+1", Data = cc });
+
+
         }
 
 
